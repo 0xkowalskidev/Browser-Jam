@@ -82,8 +82,7 @@ build_dom :: proc(tokens: [dynamic]Token) -> ^Node {
 }
 
 main :: proc() {
-	// Read File
-	data, ok := os.read_entire_file_from_filename("input.html")
+	data, ok := os.read_entire_file_from_filename(os.args[1] if len(os.args) > 1 else "input.html")
 	if !ok {
 		return
 	}
