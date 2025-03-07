@@ -16,20 +16,25 @@ Node :: struct {
 	children: [dynamic]^Node,
 }
 
-render_node :: proc(node: ^Node, x, y: i32) -> i32 {
-	y_offset := y
+render_node :: proc(node: ^Node, x, y, font_size: i32) -> i32 {
 	if node.tag == "text" && node.text != "" {
 		c_text := strings.clone_to_cstring(node.text, context.temp_allocator)
-		rl.DrawText(c_text, x, y, 20, rl.WHITE)
+		rl.DrawText(c_text, x, y, font_size, rl.WHITE)
 		return 20
 	}
+
+	y_offset := y
+	new_font_size := font_size
 
 	if node.tag == "p" {
 		y_offset += 20
 	}
+	if node.tag == "h1" {
+		new_font_size += 10
+	}
 
 	for child in node.children {
-		y_offset += render_node(child, x, y_offset)
+		y_offset += render_node(child, x, y_offset, new_font_size)
 	}
 
 	return y_offset - y
@@ -99,7 +104,7 @@ main :: proc() {
 
 		y: i32 = 10
 		for child in root.children {
-			y += render_node(child, 10, y)
+			y += render_node(child, 10, y, 20)
 		}
 	}
 }
